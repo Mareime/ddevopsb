@@ -1,0 +1,30 @@
+name: Build and Push Docker Image
+
+on:
+  push:
+    branches:
+      - main # Déclenche l'action uniquement sur les pushs vers la branche main
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Vérifiez le dépôt (checkout)
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # 2. Connexion à Docker Hub
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }} # Votre nom d'utilisateur Docker Hub
+          password: ${{ secrets.DOCKER_PASSWORD }} # Votre mot de passe ou token Docker Hub
+
+      # 3. Construisez et poussez l'image Docker
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/devops_b:latest
